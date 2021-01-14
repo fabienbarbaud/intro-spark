@@ -67,7 +67,134 @@ Combiner du SQL, du Streaming, du machine learning, ... en une seule application
 
 ## Resilient Distributed Datasets (RDDs)
 
+le RDD est une **collection** d'éléments **partitionnés** et **répartis** entre les nœuds du cluster et **accessible uniquement** en **lecture-seule**.
+
 [RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Paralléliser une collection
+
+```python
+data = [1, 2, 3, 4, 5]
+distData = sc.parallelize(data)
+```
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Charger de la donnée externe
+
+```python
+distFile = sc.textFile("data.txt")
+```
+
+Le fichier peut être en local mais Spark support les systèmes de fichier distribué : *hdfs://*, *s3a://*, ...
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Sauvegarder un RDD
+
+```python
+sc.saveAsTextFile("data.txt")
+```
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Exemple simple
+
+```python
+lines = sc.textFile("data.txt")
+lineLengths = lines.map(lambda s: len(s))
+totalLength = lineLengths.reduce(lambda a, b: a + b)
+```
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Transformations
+
+* map
+* filter
+* groupByKey
+* reduceByKey
+* join
+* ...
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Actions
+
+* reduce
+* collect
+* count
+* take
+* ...
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Exemple Wordcount
+
+```python
+words = sc.textFile("/zeppelin/files/wordcount/conseil-tenu-par-les-rats.txt").flatMap(lambda line: line.split(" "))
+wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a,b:a +b)
+```
+
+[RDD](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+
+---
+
+# Apache Spark
+
+## Resilient Distributed Datasets (RDDs)
+
+### Tester avec Zeppelin
+
+```
+$ git clone https://github.com/fabienbarbaud/apache-zeppelin.git
+$ cd apache-zeppelin
+$ docker-compose up -d
+```
+
+http://localhost:8080/#/notebook/2FUS99C8T
 
 ---
 
@@ -75,7 +202,96 @@ Combiner du SQL, du Streaming, du machine learning, ... en une seule application
 
 ## DataFrames
 
+Un DataFrame est une **collection distribuée** de données organisées en **colonnes nommées**. Il est conceptuellement équivalent à une **table dans une base de données relationnelle**.
+
 [DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes)
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Exemple simple
+
+```python
+df = spark.read.json("/zeppelin/files/dataframe/MOCK_DATA.json")
+df.filter(df['gender'] == "Female")
+```
+
+[DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes)
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Aussi en CSV
+
+```python
+df = spark.read.option("header",True).csv("/zeppelin/files/dataframe/MOCK_DATA.csv")
+df.filter(df['gender'] == "Male")
+```
+
+[DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes)
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Avec un groupement
+
+```python
+df.groupBy("gender").count()
+```
+
+[DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes)
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Mais aussi en SQL
+
+```python
+df = spark.read.option("header",True).csv("/zeppelin/files/dataframe/MOCK_DATA.csv")
+df.createOrReplaceTempView("people")
+sqlDF = spark.sql("SELECT * FROM people")
+```
+
+[DataFrames](https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes)
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Tester avec Zeppelin
+
+http://localhost:8080/#/notebook/2FUAYT7SC
+
+---
+
+# Apache Spark
+
+## DataFrames
+
+### Exemple Wordcount
+
+```python
+from pyspark.sql.functions import split, explode
+
+df = spark.read.text("/zeppelin/files/wordcount/conseil-tenu-par-les-rats.txt")
+df.select(explode(split(df.value, '\s+')).alias('word')).groupBy("word").count()
+```
+
+http://localhost:8080/#/notebook/2FUZMQVNB
 
 ---
 
