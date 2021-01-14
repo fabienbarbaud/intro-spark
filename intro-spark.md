@@ -300,3 +300,12 @@ http://localhost:8080/#/notebook/2FUZMQVNB
 ## Apache Zeppelin
 
 ![](images/notebook.png)
+
+---
+
+# Apache Spark
+
+## Exercice
+
+- Récupérez au minimum deux source de données sur [data.gouv.fr](https://www.data.gouv.fr/fr/)
+- Présenter dans un notebook sous Zeppelin (avec Spark et PySpark) un rapport de votre analyse des données en mélangeant les différentes sources
